@@ -62,6 +62,7 @@ def pairwise_distances(x: torch.Tensor,
                 y.unsqueeze(0).expand(n_x, n_y, -1)
         ).pow(2).sum(dim=2)
         return distances
+
     elif matching_fn == 'cosine':
         normalised_x = x / (x.pow(2).sum(dim=1, keepdim=True).sqrt() + EPSILON)
         normalised_y = y / (y.pow(2).sum(dim=1, keepdim=True).sqrt() + EPSILON)
@@ -71,11 +72,28 @@ def pairwise_distances(x: torch.Tensor,
 
         cosine_similarities = (expanded_x * expanded_y).sum(dim=2)
         return 1 - cosine_similarities
+
+    elif matching_fn == 'direction-aware':
+        mean_sq_errors = (
+                x.unsqueeze(1).expand(n_x, n_y, -1) -
+                y.unsqueeze(0).expand(n_x, n_y, -1)
+        ).pow(2).mean(dim=2)
+
+        normalised_x = x / (x.pow(2).sum(dim=1, keepdim=True).sqrt() + EPSILON)
+        normalised_y = y / (y.pow(2).sum(dim=1, keepdim=True).sqrt() + EPSILON)
+        expanded_x = normalised_x.unsqueeze(1).expand(n_x, n_y, -1)
+        expanded_y = normalised_y.unsqueeze(0).expand(n_x, n_y, -1)
+        cosine_similarities = (expanded_x * expanded_y).sum(dim=2)
+        cosine_dists = 1 - cosine_similarities
+
+        return mean_sq_errors + cosine_dists
+
     elif matching_fn == 'dot':
         expanded_x = x.unsqueeze(1).expand(n_x, n_y, -1)
         expanded_y = y.unsqueeze(0).expand(n_x, n_y, -1)
 
         return -(expanded_x * expanded_y).sum(dim=2)
+
     else:
         raise(ValueError('Unsupported similarity function'))
 
