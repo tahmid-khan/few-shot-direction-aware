@@ -5,14 +5,14 @@ from torch.optim import Adam
 from torch.utils.data import DataLoader
 import argparse
 
-from few_shot.datasets import OmniglotDataset, MiniImageNet
-from few_shot.models import get_few_shot_encoder
-from few_shot.core import NShotTaskSampler, EvaluateFewShot, prepare_nshot_task
-from few_shot.proto import proto_net_episode
-from few_shot.train import fit
-from few_shot.callbacks import *
-from few_shot.utils import setup_dirs
-from config import PATH
+from ..few_shot.datasets import OmniglotDataset, MiniImageNet
+from ..few_shot.models import get_few_shot_encoder
+from ..few_shot.core import NShotTaskSampler, EvaluateFewShot, prepare_nshot_task
+from ..few_shot.proto import proto_net_episode
+from ..few_shot.train import fit
+from ..few_shot.callbacks import *
+from ..few_shot.utils import setup_dirs
+from ..config import PATH
 
 
 setup_dirs()
